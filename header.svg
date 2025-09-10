@@ -27,7 +27,7 @@
           -webkit-text-fill-color: transparent;
         }
 
-        /* Cursor blink (red flash). We delay on line2 so nothing shows before intro. */
+        /* Cursor blink (red flash) */
         @keyframes blink { from, to { border-color: transparent; } 50% { border-color: red; } }
 
         /* Line 1 — types once, then stays */
@@ -40,8 +40,7 @@
         }
         @keyframes typing1 { from { width: 0 } to { width: 35ch } }
 
-        /* Line 2 — cycles phrases, never deletes past "I'm " (4ch).
-           It becomes visible only after line 1 completes. */
+        /* Line 2 — same chunky typing, but phrases are a vertical stack that slides */
         .line2 {
           font-size: 2em;
           width: 4ch;              /* baseline = "I'm " */
@@ -49,80 +48,92 @@
           animation:
             show 0s linear var(--intro) 1 forwards,
             typing2 24s steps(30, end) var(--intro) infinite,
-            rotateText 24s steps(1, end) var(--intro) infinite,
             blink .6s step-end var(--intro) infinite alternate;
         }
         @keyframes show { to { visibility: visible } }
 
-        /* PHRASES (corrected for grammar/hyphenation) */
-        .line2::after { content: "I'm a Developer"; }
-        @keyframes rotateText {
-          0%, 12.499%   { content: "I'm a Developer"; }                 /* 15ch */
-          12.5%, 24.999% { content: "I'm a Leader"; }                    /* 12ch */
-          25%, 37.499%  { content: "I'm curious"; }                      /* 11ch */
-          37.5%, 49.999% { content: "I'm passionate about technology"; } /* 32ch */
-          50%, 62.499%  { content: "I'm an analytical problem solver"; } /* 32ch */
-          62.5%, 74.999% { content: "I'm autonomous"; }                  /* 14ch */
-          75%, 87.499%  { content: "I'm results-driven"; }               /* 19ch */
-          87.5%, 100%   { content: "I'm product-focused"; }              /* 19ch */
+        .prefix { pointer-events: none; }
+
+        /* A 1-line viewport after the prefix */
+        .rotator {
+          display: inline-block;
+          height: 1em;             /* show exactly one line */
+          overflow: hidden;        /* clip to one line */
+          vertical-align: bottom;
+          position: relative;
         }
 
-        /* Typing/deleting rhythm (chunky “editor” feel).
-           Each phrase occupies ~12.5% of the 24s loop (~3s each).
-           We type → hold → delete back to 4ch ("I'm ") → brief pause. */
-        @keyframes typing2 {
-          /* Phrase 1: 15ch */
-          0%     { width: 4ch; }
-          4%     { width: 15ch; }  /* type */
-          7%     { width: 15ch; }  /* hold */
-          11%    { width: 4ch; }   /* delete to "I'm " */
-          12.5%  { width: 4ch; }   /* pause */
+        /* The vertical list of phrases */
+        .list {
+          display: inline-block;
+          line-height: 1em;        /* each item exactly 1 line tall */
+          transform: translateY(0);
+          animation: slide 24s steps(1, end) var(--intro) infinite;
+        }
+        .list > span {
+          display: block;
+          -webkit-text-fill-color: inherit; /* keep gradient */
+        }
 
-          /* Phrase 2: 12ch */
+        /* Slide the list up one line per segment (8 phrases → 8 positions).
+           Each segment is ~12.5% of the 24s loop. */
+        @keyframes slide {
+          0%, 12.499%   { transform: translateY(0); }          /* a Developer */
+          12.5%, 24.999%{ transform: translateY(-1em); }       /* a Leader */
+          25%, 37.499%  { transform: translateY(-2em); }       /* curious */
+          37.5%, 49.999%{ transform: translateY(-3em); }       /* passionate... */
+          50%, 62.499%  { transform: translateY(-4em); }       /* an analytical... */
+          62.5%, 74.999%{ transform: translateY(-5em); }       /* autonomous */
+          75%, 87.499%  { transform: translateY(-6em); }       /* results-driven */
+          87.5%, 100%   { transform: translateY(-7em); }       /* product-focused */
+        }
+
+        /* Your original chunky typing/deleting timeline (unchanged) */
+        @keyframes typing2 {
+          0%     { width: 4ch; }
+          4%     { width: 15ch; }  /* "I'm a Developer" */
+          7%     { width: 15ch; }
+          11%    { width: 4ch; }
           12.5%  { width: 4ch; }
-          16%    { width: 12ch; }
+
+          12.5%  { width: 4ch; }
+          16%    { width: 12ch; }  /* "I'm a Leader" */
           19%    { width: 12ch; }
           23%    { width: 4ch; }
           25%    { width: 4ch; }
 
-          /* Phrase 3: 11ch */
           25%    { width: 4ch; }
-          28.5%  { width: 11ch; }
+          28.5%  { width: 11ch; }  /* "I'm curious" */
           31.5%  { width: 11ch; }
           36%    { width: 4ch; }
           37.5%  { width: 4ch; }
 
-          /* Phrase 4: 32ch */
           37.5%  { width: 4ch; }
-          41.5%  { width: 32ch; }
+          41.5%  { width: 32ch; }  /* "I'm passionate about technology" */
           45%    { width: 32ch; }
           49%    { width: 4ch; }
           50%    { width: 4ch; }
 
-          /* Phrase 5: 32ch */
           50%    { width: 4ch; }
-          54%    { width: 32ch; }
+          54%    { width: 32ch; }  /* "I'm an analytical problem solver" */
           57.5%  { width: 32ch; }
           61.5%  { width: 4ch; }
           62.5%  { width: 4ch; }
 
-          /* Phrase 6: 14ch */
           62.5%  { width: 4ch; }
-          66%    { width: 14ch; }
+          66%    { width: 14ch; }  /* "I'm autonomous" */
           69%    { width: 14ch; }
           73.5%  { width: 4ch; }
           75%    { width: 4ch; }
 
-          /* Phrase 7: 19ch */
           75%    { width: 4ch; }
-          78.5%  { width: 19ch; }
+          78.5%  { width: 19ch; }  /* "I'm results-driven" */
           81.5%  { width: 19ch; }
           86%    { width: 4ch; }
           87.5%  { width: 4ch; }
 
-          /* Phrase 8: 19ch */
           87.5%  { width: 4ch; }
-          91%    { width: 19ch; }
+          91%    { width: 19ch; }  /* "I'm product-focused" */
           94%    { width: 19ch; }
           98.5%  { width: 4ch; }
           100%   { width: 4ch; }
@@ -132,7 +143,23 @@
       <div class="wrapper">
         <div class="stack">
           <div class="line line1">Hi, I'm Jan — welcome to my profile</div>
-          <div class="line line2"></div>
+
+          <!-- Line 2: prefix + 1-line viewport + vertical list that slides -->
+          <div class="line line2">
+            <span class="prefix">I'm&nbsp;</span>
+            <span class="rotator" aria-hidden="true">
+              <span class="list">
+                <span>a Developer</span>
+                <span>a Leader</span>
+                <span>curious</span>
+                <span>passionate about technology</span>
+                <span>an analytical problem solver</span>
+                <span>autonomous</span>
+                <span>results-driven</span>
+                <span>product-focused</span>
+              </span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
