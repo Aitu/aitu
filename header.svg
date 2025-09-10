@@ -1,0 +1,169 @@
+<svg fill="none" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <style>
+        :root { --intro: 2.8s; --cycle: 24s; }
+
+        .wrapper {
+          height: 100vh;
+          display: grid;
+          place-items: center;
+        }
+        .stack { display: grid; gap: .35em; line-height: 1.05; }
+
+        /* Shared look: white→red, chunky cursor */
+        .line {
+          font-family: monospace;
+          white-space: nowrap;
+          background: linear-gradient(90deg, white 0%, red 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        /* Cursor blink */
+        @keyframes blink { from,to{ border-color:transparent } 50%{ border-color:red } }
+
+        /* LINE 1 — type once, then stay */
+        .line1 {
+          font-size: 2.4em;
+          overflow: hidden;
+          border-right: 3px solid black;
+          width: 35ch; /* "Hi, I'm Jan — welcome to my profile" */
+          animation:
+            typing1 var(--intro) steps(22, end) 0s 1 both,
+            blink .6s step-end 0s infinite alternate;
+        }
+        @keyframes typing1 { from{ width:0 } to{ width:35ch } }
+
+        /* LINE 2 — prefix stays, suffix rotates via stacked spans */
+        .line2 {
+          font-size: 2em;
+          display: inline-flex;
+          overflow: visible;
+        }
+        .prefix {
+          border-right: 3px solid black; /* cursor sits after prefix when empty */
+          animation: blink .6s step-end var(--intro) infinite alternate;
+          padding-right: 0; /* keep cursor tight */
+        }
+        .rotator {
+          position: relative;
+          display: inline-block;
+          margin-left: 0; /* immediately after "I'm " */
+        }
+        .phrase {
+          position: absolute;
+          left: 0; top: 0;
+          overflow: hidden;
+          border-right: 3px solid black; /* cursor follows typed width */
+          /* CHUNKY typing/deleting: fewer steps than chars → bigger jumps */
+          animation-timing-function: steps(12, end);
+          color: transparent; /* text color is via gradient on parent */
+          -webkit-text-fill-color: inherit;
+          visibility: hidden; /* default hidden */
+        }
+
+        /* Each phrase runs across the full cycle; only its window is visible.
+           Timeline per phrase segment (~3s each in a 24s cycle):
+           - 0%→30%: type to full width
+           - 30%→55%: hold
+           - 55%→95%: delete back to 0
+           - 95%→100%: gap before next
+        */
+
+        @keyframes p1 {
+          0%   { visibility: visible; opacity:1; width:0ch; }
+          30%  { width:11ch; }
+          55%  { width:11ch; }
+          95%  { width:0ch; }
+          100% { opacity:0; visibility:hidden; }
+        }
+        @keyframes p2 {
+          0%,12.49% { opacity:0; visibility:hidden; }
+          12.5% { visibility:visible; opacity:1; width:0ch; }
+          42.5% { width:8ch; }
+          55%   { width:8ch; }
+          95%   { width:0ch; }
+          100%  { opacity:0; visibility:hidden; }
+        }
+        @keyframes p3 {
+          0%,24.99% { opacity:0; visibility:hidden; }
+          25%  { visibility:visible; opacity:1; width:0ch; }
+          55%  { width:7ch; }
+          67.5%{ width:7ch; }
+          95%  { width:0ch; }
+          100% { opacity:0; visibility:hidden; }
+        }
+        @keyframes p4 {
+          0%,37.49% { opacity:0; visibility:hidden; }
+          37.5% { visibility:visible; opacity:1; width:0ch; }
+          67.5% { width:27ch; }
+          80%   { width:27ch; }
+          95%   { width:0ch; }
+          100%  { opacity:0; visibility:hidden; }
+        }
+        @keyframes p5 {
+          0%,49.99% { opacity:0; visibility:hidden; }
+          50%  { visibility:visible; opacity:1; width:0ch; }
+          80%  { width:28ch; }
+          92.5%{ width:28ch; }
+          99%  { width:0ch; }
+          100% { opacity:0; visibility:hidden; }
+        }
+        @keyframes p6 {
+          0%,62.49% { opacity:0; visibility:hidden; }
+          62.5% { visibility:visible; opacity:1; width:0ch; }
+          80%   { width:10ch; }
+          92.5% { width:10ch; }
+          99%   { width:0ch; }
+          100%  { opacity:0; visibility:hidden; }
+        }
+        @keyframes p7 {
+          0%,74.99% { opacity:0; visibility:hidden; }
+          75%  { visibility:visible; opacity:1; width:0ch; }
+          90%  { width:14ch; }
+          97%  { width:14ch; }
+          99.5%{ width:0ch; }
+          100% { opacity:0; visibility:hidden; }
+        }
+        @keyframes p8 {
+          0%,87.49% { opacity:0; visibility:hidden; }
+          87.5% { visibility:visible; opacity:1; width:0ch; }
+          97.5% { width:15ch; }
+          99%   { width:15ch; }
+          100%  { width:0ch; opacity:0; visibility:hidden; }
+        }
+
+        /* Apply the animations (all start after Line 1 finishes) */
+        .p1 { --w:11ch; animation: p1 var(--cycle) var(--intro) infinite; }
+        .p2 { --w: 8ch; animation: p2 var(--cycle) var(--intro) infinite; }
+        .p3 { --w: 7ch; animation: p3 var(--cycle) var(--intro) infinite; }
+        .p4 { --w:27ch; animation: p4 var(--cycle) var(--intro) infinite; }
+        .p5 { --w:28ch; animation: p5 var(--cycle) var(--intro) infinite; }
+        .p6 { --w:10ch; animation: p6 var(--cycle) var(--intro) infinite; }
+        .p7 { --w:14ch; animation: p7 var(--cycle) var(--intro) infinite; }
+        .p8 { --w:15ch; animation: p8 var(--cycle) var(--intro) infinite; }
+      </style>
+
+      <div class="wrapper">
+        <div class="stack">
+          <div class="line line1">Hi, I'm Jan — welcome to my profile</div>
+
+          <div class="line line2">
+            <span class="prefix">I'm&nbsp;</span>
+            <span class="rotator">
+              <span class="phrase p1">a Developer</span>
+              <span class="phrase p2">a Leader</span>
+              <span class="phrase p3">curious</span>
+              <span class="phrase p4">passionate about technology</span>
+              <span class="phrase p5">an analytical problem solver</span>
+              <span class="phrase p6">autonomous</span>
+              <span class="phrase p7">results-driven</span>
+              <span class="phrase p8">product-focused</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </foreignObject>
+</svg>
